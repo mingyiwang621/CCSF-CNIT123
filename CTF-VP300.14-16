@@ -1,0 +1,40 @@
+import hashlib
+import binascii
+
+# 定义盐值和迭代次数
+salt = "SIXTEEN_TONS_OF_"
+iterations = 100000
+
+# 定义目标哈希值
+target_hash = "6387a2fcd0facda4fc82075fd68ea1b613ac72f08c712fe81898c663d7ccbfe1"
+
+print(f"Salt: {salt}")
+print(f"Target hash: {target_hash}")
+
+# 定义字典
+wordlist = [f"CCSF-sam-{i:02}" for i in range(100)]  # 生成字典列表
+
+# 开始破解
+found = False
+print("Starting cracking...")
+for password in wordlist:
+    # 使用 PBKDF2-HMAC-SHA256 算法生成哈希
+    derived_key = hashlib.pbkdf2_hmac(
+        'sha256', 
+        password.encode('utf-8'), 
+        salt.encode('utf-8'), 
+        iterations
+    )
+    # 转换为十六进制
+    generated_hash = binascii.hexlify(derived_key).decode('utf-8')
+    print(f"Generated hash for {password}: {generated_hash}")
+    print(f"Trying password: {password}")  # 调试输出
+    if generated_hash == target_hash:
+        found = True
+        print(f"Password found: {password}")
+        break
+
+if not found:
+    print("Password not found in the wordlist.")
+
+print("Cracking complete.")

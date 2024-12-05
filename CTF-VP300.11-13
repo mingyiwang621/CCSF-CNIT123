@@ -1,0 +1,29 @@
+import crypt
+
+# 定义字典
+wordlist = [f"CCSF-ming-{i:02}" for i in range(100)]  # 生成密码范围
+
+# 目标哈希值
+target_hash = "$6$blbkhFFelIX6BLYW$n95GODbW3vJwYdchQ/k5OX7rxq3NxGIcJdlLeh4npWNZFaTw/09Lf0TFtfwCEEFqjtSlIIWSFMMSa4pmCAvoN0"
+
+# 提取盐值 (16个字符盐值)
+salt_parts = target_hash.split("$")
+if len(salt_parts) < 4:
+    print("Invalid hash format: missing salt.")
+    exit()
+salt = f"${salt_parts[1]}${salt_parts[2]}$"
+
+print(f"Extracted salt: {salt}")  # 输出提取的盐值，确认是否正确
+
+# 开始破解
+found = False
+for password in wordlist:
+    generated_hash = crypt.crypt(password, salt)  # 使用提取的盐值生成哈希
+    print(f"Trying password: {password}")
+    if generated_hash == target_hash:
+        print(f"Password found: {password}")
+        found = True
+        break
+
+if not found:
+    print("Password not found in the wordlist.")

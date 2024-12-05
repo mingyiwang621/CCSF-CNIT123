@@ -1,0 +1,22 @@
+mport hashlib
+
+# 目标哈希值
+target_hash = "42e646b706acfab0cf8079351d176121"
+
+# 遍历所有可能的字符串
+for i in range(100):
+    # 格式化字符串，例如 "CCSF-ming-00" 到 "CCSF-ming-99"
+    base_string = f"CCSF-sam-{i:02}"
+    current_hash = base_string
+
+    # 对字符串进行最多 100 次迭代
+    for iteration in range(100):
+        # 计算当前字符串的 MD5 哈希
+        current_hash = hashlib.md5(current_hash.encode('utf-8')).hexdigest()
+
+        # 检查是否匹配目标哈希值
+        if current_hash == target_hash:
+            print(f"Match found: {base_string} after {iteration + 1} iterations")
+            exit(0)
+
+print("No match found.")

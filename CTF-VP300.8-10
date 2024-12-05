@@ -1,0 +1,30 @@
+mport hashlib
+
+# 字典文件（替换为实际字典）
+wordlist = [f"CCSF-mohammed-{i:02}" for i in range(100)]  # 假设目标密码格式
+
+# 目标哈希值
+target_hash = "582d99006950cddeb2df9f40b3f65ebc283dc378"
+
+# 最大迭代总次数
+max_total_rounds = 500
+
+# 遍历字典
+for word in wordlist:
+    for total_rounds in range(1, max_total_rounds):  # 总迭代次数小于500
+        for md5_rounds in range(total_rounds):  # MD5迭代次数
+            sha1_rounds = total_rounds - md5_rounds  # SHA1迭代次数
+            if sha1_rounds > md5_rounds:  # 保证SHA1迭代次数大于MD5迭代次数
+                current_hash = word
+                # MD5 迭代
+                for _ in range(md5_rounds):
+                    current_hash = hashlib.md5(current_hash.encode('utf-8')).hexdigest()
+                # SHA1 迭代
+                for _ in range(sha1_rounds):
+                    current_hash = hashlib.sha1(current_hash.encode('utf-8')).hexdigest()
+                # 比较结果
+                if current_hash == target_hash:
+                    print(f"Cracked! Word: {word}, Total Rounds: {total_rounds}, MD5 Rounds: {md5_rounds}, S>
+                    exit()
+
+print("Failed to crack the hash within the constraints.")
